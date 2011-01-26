@@ -10,19 +10,28 @@ MAGE_URL="http://www.magentocommerce.com/downloads/assets/1.3.2.1/$MAGE_FILE"
 
 log "Downloading Magento"
 wget -q $MAGE_URL
+
 log "Unpacking Magento"
 tar -xzf $MAGE_FILE
 rm $MAGE_FILE
 mv magento/* magento/.htaccess .
 rmdir magento
 chmod -R o+w media
-log "Configuring PEAR"
+
+log "Configuring PEAR for Magento"
 ./pear mage-setup
+
+log "Updating PEAR"
+./pear channel-update pear.php.net
+./pear upgrade --force PEAR
+
 log "Updating Magento PEAR Packages"
 ./pear install magento-core/Mage_All_Latest-stable
+
 log "Cleaning Up"
 chmod o+w var var/.htaccess app/etc
 rm -rf downloader/pearlib/cache/* downloader/pearlib/download/*
+
 log "Complete"
 exit 0
 
